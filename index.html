@@ -112,15 +112,6 @@
   </div>
 
   <div id="inputs"></div>
-   
-  <h3>Adicionar Odds Manualmente</h3>
-<div id="manual-odds">
-  <input type="text" id="timeCasa" placeholder="Time da Casa" />
-  <input type="text" id="timeFora" placeholder="Time Visitante" />
-  <input type="text" id="resultado" placeholder="Ex: Vitória Casa, Empate, Vitória Fora" />
-  <input type="number" step="0.01" id="oddManual" placeholder="Odd (ex: 1.85)" />
-  <button onclick="adicionarOddManual()">Adicionar Jogo Manual</button>
-</div>
 
   <label for="tipoDesdobramento">Tipo de aposta (acertos):</label>
   <select id="tipoDesdobramento">
@@ -278,42 +269,6 @@ function selecionarTodos() {
 
 function limparSelecao() {
   document.querySelectorAll(".jogoCheck").forEach(cb => cb.checked = false);
-}
-function adicionarOddManual() {
-  const timeCasa = document.getElementById("timeCasa").value.trim();
-  const timeFora = document.getElementById("timeFora").value.trim();
-  const resultado = document.getElementById("resultado").value.trim();
-  const odd = parseFloat(document.getElementById("oddManual").value);
-
-  if (!timeCasa || !timeFora || !resultado || isNaN(odd) || odd <= 1) {
-    alert("Preencha corretamente todos os campos e informe uma odd válida.");
-    return;
-  }
-
-  const inputs = document.getElementById("inputs");
-
-  const cardHTML = `
-    <div class="game-card" data-times="${timeCasa.toLowerCase()} ${timeFora.toLowerCase()}">
-      <div class="game-title">${timeCasa} vs ${timeFora}</div>
-      <div style="font-size: 0.9rem; color: #555;">🕒 Manual | 🏦 Inserido por você</div>
-      <div style="margin-top: 10px;">
-        <div class="game-option">
-          <input type="checkbox" class="jogoCheck"
-                 data-nome="${timeCasa} vs ${timeFora} - ${resultado}"
-                 data-odd="${odd.toFixed(2)}" />
-          <span class="icon">✍️</span> ${resultado} @ ${odd.toFixed(2)}
-        </div>
-      </div>
-    </div>
-  `;
-
-  inputs.insertAdjacentHTML("beforeend", cardHTML);
-
-  // Limpa campos
-  document.getElementById("timeCasa").value = "";
-  document.getElementById("timeFora").value = "";
-  document.getElementById("resultado").value = "";
-  document.getElementById("oddManual").value = "";
 }
 
 document.getElementById("filtro").addEventListener("input", function () {

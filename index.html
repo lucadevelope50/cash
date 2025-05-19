@@ -133,6 +133,32 @@ async function carregarOddsReais() {
     alert("Erro ao buscar odds. Tente novamente mais tarde.");
   }
 }
+
+  function atualizarCampos() {
+    const qtd = parseInt(document.getElementById("quantidade").value);
+    const tipo = document.getElementById("tipoAposta").value;
+    const inputs = document.getElementById("inputs");
+    inputs.innerHTML = "<p><strong>Preencha os palpites e odds:</strong></p>";
+
+    for (let i = 1; i <= qtd; i++) {
+      let palpiteInput = "";
+      if (tipo === "placar") {
+        palpiteInput = `<input type="text" id="palpite${i}" placeholder="Placar Jogo ${i} (ex: 2x1)">`;
+      } else if (tipo === "dupla") {
+        palpiteInput = `<input type="text" id="palpite${i}" placeholder="Dupla Chance Jogo ${i} (ex: 1X, X2)">`;
+      } else if (tipo === "resultado_gols") {
+        palpiteInput = `<input type="text" id="palpite${i}" placeholder="Ex: Time A e +1.5">`;
+      }
+
+      inputs.innerHTML += `
+        <div>
+          ${palpiteInput}
+          <input type="number" step="0.01" id="odd${i}" placeholder="Odd Jogo ${i}">
+        </div>`;
+    }
+  }
+
+  window.onload = atualizarCampos;
 </script>
 
 </body>

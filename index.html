@@ -125,6 +125,8 @@
   <button onclick="gerarDesdobramento()">Gerar L.A Cashback VIP 👑</button>
   <div id="resultado"></div>
 
+<!-- CONTINUA IGUAL ATÉ O SCRIPT FINAL -->
+
 <script>
 function gerarCombinacoes(array, k) {
   let res = [];
@@ -188,8 +190,8 @@ function gerarDesdobramento() {
 
 async function carregarOddsReais() {
   const API_KEY = "d4d52d8e8d186ecee91808ff600dcd63";
-  const liga = document.getElementById("liga").value;
-  const mercado = document.getElementById("mercado").value;
+  const liga = document.getElementById("liga")?.value || "soccer_brazil_campeonato";
+  const mercado = document.getElementById("mercado")?.value || "h2h";
   const url = `https://api.the-odds-api.com/v4/sports/${liga}/odds/?regions=us&markets=${mercado}&oddsFormat=decimal&apiKey=${API_KEY}`;
   const oddMin = parseFloat(document.getElementById("oddMin").value) || 1.10;
   const oddMax = parseFloat(document.getElementById("oddMax").value) || 10.00;
@@ -202,6 +204,9 @@ async function carregarOddsReais() {
     const inputs = document.getElementById("inputs");
     inputs.innerHTML = "";
     let jogoCount = 0;
+
+    // Ordena por data/hora do jogo
+    data.sort((a, b) => new Date(a.commence_time) - new Date(b.commence_time));
 
     data.forEach(jogo => {
       const mercadoData = jogo?.bookmakers?.[0]?.markets?.[0];
@@ -228,10 +233,20 @@ async function carregarOddsReais() {
 
       if (adicionou) {
         jogoCount++;
+
+        const dataHora = new Date(jogo.commence_time);
+        const formatter = new Intl.DateTimeFormat("pt-BR", {
+          weekday: "short", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit"
+        });
+        const horario = formatter.format(dataHora).replace(",", " às");
+
+        const casa = jogo?.bookmakers?.[0]?.title || "Desconhecida";
+
         inputs.innerHTML += `
           <div class="game-card" data-times="${jogo.home_team.toLowerCase()} ${jogo.away_team.toLowerCase()}">
             <div class="game-title">${jogo.home_team} vs ${jogo.away_team}</div>
-            ${bloco}
+            <div style="font-size: 0.9rem; color: #555;">🕒 ${horario} | 🏦 ${casa}</div>
+            <div style="margin-top: 10px;">${bloco}</div>
           </div>`;
       }
     });
@@ -265,3 +280,4 @@ document.getElementById("filtro").addEventListener("input", function () {
 </script>
 </body>
 </html>
+

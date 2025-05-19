@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -7,60 +8,126 @@
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; background: #f7f7f7; margin: 0; }
     h2 { text-align: center; color: #333; }
+
     label, select, input {
       display: block; width: 100%; margin-bottom: 12px;
       font-size: 1rem; padding: 10px; border-radius: 5px;
       border: 1px solid #ccc; box-sizing: border-box;
     }
+
     button {
       width: 100%; padding: 14px; background-color: #007BFF;
       color: white; font-size: 1.1rem; border: none;
       border-radius: 8px; margin-top: 10px; cursor: pointer;
     }
+
     button:hover { background-color: #0056b3; }
-    table {
-      width: 100%; border-collapse: collapse; margin-top: 20px;
-      font-size: 0.95rem; background: white;
+
+    
+    .game-card {
+      background: #ffffff;
+      border-left: 5px solid #007BFF;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+      padding: 15px 20px;
+      margin-bottom: 18px;
+      transition: transform 0.2s ease;
     }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-    th { background: #e9ecef; }
-    @media (max-width: 600px) {
-      table, thead, tbody, th, td, tr { display: block; }
-      thead tr { display: none; }
-      td {
-        position: relative; padding-left: 50%;
-        border: none; border-bottom: 1px solid #eee;
-      }
-      td::before {
-        content: attr(data-label); position: absolute;
-        left: 10px; top: 10px; font-weight: bold;
-        white-space: nowrap; color: #333;
-      }
-      button { font-size: 1rem; }
+    .game-card:hover {
+      transform: scale(1.02);
     }
-    #inputs > div { display: flex; gap: 10px; margin-bottom: 10px; }
-    #inputs input { flex: 1; }
-  </style>
+
+    .game-title {
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: #222;
+      margin-bottom: 5px;
+    }
+
+
+    .game-option {
+      margin-bottom: 6px;
+      display: flex; align-items: center;
+    }
+
+    .game-option input {
+      margin-right: 8px;
+    }
+
+    .icon {
+      display: inline-block; width: 20px; text-align: center;
+      margin-right: 6px;
+    }
+
+    .search-bar {
+      margin-bottom: 15px;
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    #resultado .result-card {
+      background: #ffffff; border-radius: 10px; padding: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px;
+    }
+
+    #resultado h3 {
+      margin-bottom: 10px;
+    }
+
+    .result-table {
+      width: 100%; border-collapse: collapse;
+    }
+
+    .result-table th, .result-table td {
+      padding: 10px; border: 1px solid #ccc; text-align: left;
+    }
+
+    .result-table th {
+      background: #f0f0f0;
+    }
+
+    .button-group {
+      display: flex; gap: 10px; margin-bottom: 10px;
+    }
+  
+    .combo-card {
+      background: #fff;
+      color: #000;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .combo-card h4 {
+      margin: 0 0 8px 0;
+      color: #007BFF;
+      font-size: 1.1rem;
+    }
+
+    .combo-card p {
+      margin: 4px 0;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    .combo-retorno {
+      font-weight: bold;
+      color: green;
+      margin-top: 8px;
+    }
+    
+</style>
 </head>
 <body>
   <h2>L.A Cashback VIP 👑</h2>
-  <label for="quantidade">Número de jogos:</label>
-  <select id="quantidade" onchange="atualizarCampos()">
-    <option value="1">1</option><option value="2">2</option><option value="3">3</option>
-    <option value="4">4</option><option value="5">5</option><option value="6">6</option>
-    <option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
-  </select>
-
-  <label for="tipoDesdobramento">Tipo de aposta (acertos):</label>
-  <select id="tipoDesdobramento">
-    <option value="1">1 (simples)</option><option value="2">2 (duplas)</option>
-    <option value="3">3 (trios)</option><option value="4">4 (quartetos)</option>
-    <option value="5">5 (quinas)</option><option value="6">6 (senas)</option>
-    <option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
-  </select>
 
   <label for="tipoAposta">Modo de aposta:</label>
-  <select id="tipoAposta" onchange="atualizarCampos()">
+  <select id="tipoAposta">
     <option value="simples">Simples (1X2)</option>
     <option value="placar">Placar Exato</option>
     <option value="btts">Ambas Marcam (BTTS)</option>
@@ -70,177 +137,176 @@
     <option value="resultado_gols">Resultado + Gols</option>
   </select>
 
+  <div style="display: flex; gap: 10px;">
+    <div style="flex:1">
+      <label for="oddMin">Odd mínima:</label>
+      <input type="number" id="oddMin" step="0.01" value="1.10" />
+    </div>
+    <div style="flex:1">
+      <label for="oddMax">Odd máxima:</label>
+      <input type="number" id="oddMax" step="0.01" value="10.00" />
+    </div>
+  </div>
+
   <button onclick="carregarOddsReais()">🔄 Carregar Odds Reais (Campeonato Brasileiro)</button>
 
+  <input type="text" id="filtro" class="search-bar" placeholder="Filtrar por nome do time...">
+
+  <div class="button-group">
+    <button onclick="selecionarTodos()">Selecionar Todos</button>
+    <button onclick="limparSelecao()">Limpar Seleção</button>
+  </div>
+
   <div id="inputs"></div>
+
+  <label for="tipoDesdobramento">Tipo de aposta (acertos):</label>
+  <select id="tipoDesdobramento">
+    <option value="1">1 (simples)</option><option value="2">2 (duplas)</option>
+    <option value="3">3 (trios)</option><option value="4">4 (quartetos)</option>
+    <option value="5">5 (quinas)</option><option value="6">6 (senas)</option>
+    <option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
+  </select>
+
   <input type="number" step="0.01" placeholder="Valor por combinação (R$)" id="stake" value="10" />
   <button onclick="gerarDesdobramento()">Gerar L.A Cashback VIP 👑</button>
   <div id="resultado"></div>
 
 <script>
-  function atualizarCampos() {
-    const qtd = parseInt(document.getElementById("quantidade").value);
-    const tipo = document.getElementById("tipoAposta").value;
+function gerarCombinacoes(array, k) {
+  let res = [];
+  function comb(start, combo) {
+    if (combo.length === k) return res.push(combo);
+    for (let i = start; i < array.length; i++) {
+      comb(i + 1, combo.concat([array[i]]));
+    }
+  }
+  comb(0, []);
+  return res;
+}
+
+function gerarDesdobramento() {
+  const tipoDesdobramento = parseInt(document.getElementById("tipoDesdobramento").value);
+  const stake = parseFloat(document.getElementById("stake").value);
+  const checkboxes = document.querySelectorAll(".jogoCheck:checked");
+
+  if (checkboxes.length < tipoDesdobramento) {
+    alert(`Você selecionou apenas ${checkboxes.length} jogos, mas escolheu um desdobramento de ${tipoDesdobramento}.`);
+    return;
+  }
+
+  if (isNaN(stake) || stake <= 0) {
+    alert("Insira valor de aposta válido.");
+    return;
+  }
+
+  const jogos = Array.from(checkboxes).map(cb => ({
+    jogo: cb.dataset.nome,
+    odd: parseFloat(cb.dataset.odd)
+  }));
+
+  const combinacoes = gerarCombinacoes(jogos, tipoDesdobramento);
+  let html = `<h3>Combinações ${tipoDesdobramento} (${document.querySelector("#tipoAposta option:checked").textContent})</h3>`;
+  let totalRetorno = 0;
+
+  combinacoes.forEach((combo, i) => {
+    const oddTotal = combo.reduce((acc, cur) => acc * cur.odd, 1);
+    const retorno = stake * oddTotal;
+    totalRetorno += retorno;
+
+    const selecoes = combo.map(j => `- ${j.jogo.split(" - ")[1]} (${j.odd.toFixed(2)})`).join("<br>");
+
+    html += `
+      <div class="combo-card">
+        <h4>Bilhete ${i + 1} - Odd Total: ${oddTotal.toFixed(2)}</h4>
+        <p>${selecoes}</p>
+        <div class="combo-retorno">Retorno: R$ ${retorno.toFixed(2)}</div>
+      </div>`;
+  });
+
+  const totalApostado = (combinacoes.length * stake).toFixed(2);
+  html += `
+    <p><strong>Total de combinações:</strong> ${combinacoes.length}</p>
+    <p><strong>Total Apostado:</strong> R$ ${totalApostado}</p>
+    <p style="color:green;"><strong>Retorno estimado se acertar todos:</strong> R$ ${totalRetorno.toFixed(2)}</p>`;
+
+  document.getElementById("resultado").innerHTML = html;
+
+}
+
+async function carregarOddsReais() {
+  const API_KEY = "d4d52d8e8d186ecee91808ff600dcd63";
+  const url = `https://api.the-odds-api.com/v4/sports/soccer_brazil_campeonato/odds/?regions=us&markets=h2h&oddsFormat=decimal&apiKey=${API_KEY}`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Erro na resposta da API");
+
+    const data = await response.json();
     const inputs = document.getElementById("inputs");
-    inputs.innerHTML = "<p><strong>Preencha os palpites e odds:</strong></p>";
+    const oddMin = parseFloat(document.getElementById("oddMin").value) || 1.10;
+    const oddMax = parseFloat(document.getElementById("oddMax").value) || 10.00;
+    document.getElementById("tipoAposta").value = "simples";
 
-    for (let i = 1; i <= qtd; i++) {
-      let palpiteInput = "";
-      if (tipo === "placar") {
-        palpiteInput = `<input type="text" id="palpite${i}" placeholder="Placar Jogo ${i} (ex: 2x1)">`;
-      } else if (tipo === "dupla") {
-        palpiteInput = `<input type="text" id="palpite${i}" placeholder="Dupla Chance Jogo ${i} (ex: 1X, X2)">`;
-      } else if (tipo === "resultado_gols") {
-        palpiteInput = `<input type="text" id="palpite${i}" placeholder="Ex: Time A e +1.5">`;
+    inputs.innerHTML = "";
+    let jogoCount = 0;
+
+    data.forEach(jogo => {
+      const mercado = jogo?.bookmakers?.[0]?.markets?.[0];
+      if (!mercado || mercado.outcomes.length < 3) return;
+
+      let bloco = '';
+      let adicionou = false;
+
+      mercado.outcomes.forEach(outcome => {
+        if (outcome.price >= oddMin && outcome.price <= oddMax) {
+          adicionou = true;
+          const icon = outcome.name === jogo.home_team ? "🏠" : outcome.name === "Draw" ? "⚖️" : "🚩";
+          bloco += `
+            <div class="game-option">
+              <input type="checkbox" class="jogoCheck"
+                     data-nome="${jogo.home_team} vs ${jogo.away_team} - ${outcome.name}"
+                     data-odd="${outcome.price.toFixed(2)}" />
+              <span class="icon">${icon}</span> ${outcome.name} @ ${outcome.price.toFixed(2)}
+            </div>`;
+        }
+      });
+
+      if (adicionou) {
+        jogoCount++;
+        inputs.innerHTML += `
+          <div class="game-card" data-times="${jogo.home_team.toLowerCase()} ${jogo.away_team.toLowerCase()}">
+            <div class="game-title">${jogo.home_team} vs ${jogo.away_team}</div>
+            ${bloco}
+          </div>`;
       }
-
-      inputs.innerHTML += `
-        <div>
-          ${palpiteInput}
-          <input type="number" step="0.01" id="odd${i}" placeholder="Odd Jogo ${i}">
-        </div>`;
-    }
-  }
-
-  window.onload = atualizarCampos;
-
-  function gerarCombinacoes(array, k) {
-    let res = [];
-    function comb(start, combo) {
-      if (combo.length === k) return res.push(combo);
-      for (let i = start; i < array.length; i++) {
-        comb(i + 1, combo.concat([array[i]]));
-      }
-    }
-    comb(0, []);
-    return res;
-  }
-
-  function gerarDesdobramento() {
-    const qtd = parseInt(document.getElementById("quantidade").value);
-    const tipo = document.getElementById("tipoAposta").value;
-    const tipoDesdobramento = parseInt(document.getElementById("tipoDesdobramento").value);
-    const stake = parseFloat(document.getElementById("stake").value);
-    const jogos = [];
-
-    if (tipoDesdobramento > qtd) {
-      alert(`Você selecionou apenas ${qtd} jogos, mas escolheu um desdobramento de ${tipoDesdobramento}.`);
-      return;
-    }
-
-    if (isNaN(stake) || stake <= 0) {
-      alert("Insira valor de aposta válido.");
-      return;
-    }
-
-    for (let i = 1; i <= qtd; i++) {
-      const odd = parseFloat(document.getElementById("odd" + i).value);
-      if (isNaN(odd) || odd <= 1) {
-        alert("Odd inválida no Jogo " + i);
-        return;
-      }
-
-      const palpite = document.getElementById("palpite" + i)?.value.trim() || "";
-      let nome = "";
-
-      switch (tipo) {
-        case "placar":
-          nome = `Placar: ${palpite}`;
-          break;
-        case "dupla":
-          nome = `Dupla Chance: ${palpite}`;
-          break;
-        case "resultado_gols":
-          nome = `Resultado+Gols: ${palpite}`;
-          break;
-        case "btts":
-          nome = `Ambas Marcam`;
-          break;
-        case "over25":
-          nome = `Mais de 2.5 Gols`;
-          break;
-        case "under25":
-          nome = `Menos de 2.5 Gols`;
-          break;
-        default:
-          nome = palpite || `Jogo ${i}`;
-      }
-
-      jogos.push({ jogo: nome, odd: odd });
-    }
-
-    const combinacoes = gerarCombinacoes(jogos, tipoDesdobramento);
-    let html = `<h3>${tipoDesdobramento === 1 ? 'Apostas Simples' : `Combinações ${tipoDesdobramento} em ${qtd}`} (${document.querySelector("#tipoAposta option:checked").textContent})</h3>`;
-    html += `<table><thead><tr><th>#</th><th>Combinação</th><th>Odd Total</th><th>Retorno</th></tr></thead><tbody>`;
-
-    let totalRetorno = 0;
-
-    combinacoes.forEach((combo, i) => {
-      const nomes = combo.map(j => `${j.jogo} (${j.odd.toFixed(2)})`).join(", ");
-      const oddTotal = combo.reduce((acc, cur) => acc * cur.odd, 1);
-      const retorno = stake * oddTotal;
-      totalRetorno += retorno;
-
-      html += `
-        <tr>
-          <td data-label="#">${i + 1}</td>
-          <td data-label="Combinação">${nomes}</td>
-          <td data-label="Odd Total">${oddTotal.toFixed(2)}</td>
-          <td data-label="Retorno">R$ ${retorno.toFixed(2)}</td>
-        </tr>`;
     });
 
-    const totalApostado = (combinacoes.length * stake).toFixed(2);
-
-    html += `</tbody></table>
-             <p><strong>Total de ${tipoDesdobramento === 1 ? 'apostas simples' : 'combinações'}:</strong> ${combinacoes.length}</p>
-             <p><strong>Total Apostado:</strong> R$ ${totalApostado}</p>
-             <p style="color:green;"><strong>Retorno estimado se acertar todos os jogos:</strong> R$ ${totalRetorno.toFixed(2)}</p>`;
-
-    document.getElementById("resultado").innerHTML = html;
-  }
-
-  async function carregarOddsReais() {
-    const API_KEY = "d4d52d8e8d186ecee91808ff600dcd63";
-    const url = `https://api.the-odds-api.com/v4/sports/soccer_brazil_campeonato/odds/?apiKey=${API_KEY}&regions=br&markets=h2h&oddsFormat=decimal`;
-
-    try {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error("Erro na resposta da API");
-
-      const data = await response.json();
-      const inputs = document.getElementById("inputs");
-      const qtd = parseInt(document.getElementById("quantidade").value);
-      document.getElementById("tipoAposta").value = "simples";
-
-      inputs.innerHTML = "<p><strong>Odds reais carregadas:</strong></p>";
-
-      for (let i = 0; i < qtd; i++) {
-        const jogo = data[i];
-        const mercado = jogo?.bookmakers?.[0]?.markets?.[0];
-
-        if (!mercado || mercado.outcomes.length < 2) continue;
-
-        const timeA = mercado.outcomes[0].name;
-        const oddA = mercado.outcomes[0].price;
-        const timeB = mercado.outcomes[1].name;
-        const oddB = mercado.outcomes[1].price;
-
-        inputs.innerHTML += `
-          <div>
-            <input type="text" id="palpite${i + 1}" value="${timeA} ou ${timeB}" disabled />
-            <input type="number" step="0.01" id="odd${i + 1}" value="${Math.max(oddA, oddB).toFixed(2)}" />
-          </div>
-        `;
-      }
-
-      alert("Odds carregadas com sucesso!");
-    } catch (err) {
-      console.error("Erro ao buscar odds reais:", err);
-      alert("Erro ao buscar odds. Tente novamente mais tarde.");
+    if (jogoCount === 0) {
+      inputs.innerHTML += "<p style='color:red;'>Nenhuma odd encontrada no intervalo definido.</p>";
+    } else {
+      alert("Selecione os resultados desejados para apostar.");
     }
-  }
-</script>
 
+  } catch (err) {
+    console.error("Erro ao buscar odds reais:", err);
+    alert("Erro ao buscar odds. Tente novamente mais tarde.");
+  }
+}
+
+function selecionarTodos() {
+  document.querySelectorAll(".jogoCheck").forEach(cb => cb.checked = true);
+}
+
+function limparSelecao() {
+  document.querySelectorAll(".jogoCheck").forEach(cb => cb.checked = false);
+}
+
+document.getElementById("filtro").addEventListener("input", function () {
+  const termo = this.value.toLowerCase();
+  document.querySelectorAll(".game-card").forEach(card => {
+    card.style.display = card.dataset.times.includes(termo) ? "block" : "none";
+  });
+});
+</script>
 </body>
 </html>

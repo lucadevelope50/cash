@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -8,120 +7,59 @@
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; background: #f7f7f7; margin: 0; }
     h2 { text-align: center; color: #333; }
-
     label, select, input {
       display: block; width: 100%; margin-bottom: 12px;
       font-size: 1rem; padding: 10px; border-radius: 5px;
       border: 1px solid #ccc; box-sizing: border-box;
     }
-
     button {
       width: 100%; padding: 14px; background-color: #007BFF;
       color: white; font-size: 1.1rem; border: none;
       border-radius: 8px; margin-top: 10px; cursor: pointer;
     }
-
     button:hover { background-color: #0056b3; }
-
-    
     .game-card {
-      background: #ffffff;
-      border-left: 5px solid #007BFF;
-      border-radius: 10px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-      padding: 15px 20px;
-      margin-bottom: 18px;
+      background: #ffffff; border-left: 5px solid #007BFF;
+      border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+      padding: 15px 20px; margin-bottom: 18px;
       transition: transform 0.2s ease;
     }
-    .game-card:hover {
-      transform: scale(1.02);
-    }
-
-    .game-title {
-      font-weight: bold;
-      font-size: 1.1rem;
-      color: #222;
-      margin-bottom: 5px;
-    }
-
-
-    .game-option {
-      margin-bottom: 6px;
-      display: flex; align-items: center;
-    }
-
-    .game-option input {
-      margin-right: 8px;
-    }
-
-    .icon {
-      display: inline-block; width: 20px; text-align: center;
-      margin-right: 6px;
-    }
-
+    .game-card:hover { transform: scale(1.02); }
+    .game-title { font-weight: bold; font-size: 1.1rem; color: #222; margin-bottom: 5px; }
+    .game-option { margin-bottom: 6px; display: flex; align-items: center; }
+    .game-option input { margin-right: 8px; }
+    .icon { display: inline-block; width: 20px; text-align: center; margin-right: 6px; }
     .search-bar {
-      margin-bottom: 15px;
-      padding: 10px;
-      font-size: 1rem;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      width: 100%;
-      box-sizing: border-box;
+      margin-bottom: 15px; padding: 10px;
+      font-size: 1rem; border-radius: 5px;
+      border: 1px solid #ccc; width: 100%; box-sizing: border-box;
     }
-
     #resultado .result-card {
       background: #ffffff; border-radius: 10px; padding: 15px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px;
     }
-
-    #resultado h3 {
-      margin-bottom: 10px;
-    }
-
-    .result-table {
-      width: 100%; border-collapse: collapse;
-    }
-
+    #resultado h3 { margin-bottom: 10px; }
+    .result-table { width: 100%; border-collapse: collapse; }
     .result-table th, .result-table td {
       padding: 10px; border: 1px solid #ccc; text-align: left;
     }
-
-    .result-table th {
-      background: #f0f0f0;
-    }
-
-    .button-group {
-      display: flex; gap: 10px; margin-bottom: 10px;
-    }
-  
+    .result-table th { background: #f0f0f0; }
+    .button-group { display: flex; gap: 10px; margin-bottom: 10px; }
     .combo-card {
-      background: #fff;
-      color: #000;
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 15px;
+      background: #fff; color: #000; border-radius: 12px;
+      padding: 15px; margin-bottom: 15px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
-
     .combo-card h4 {
-      margin: 0 0 8px 0;
-      color: #007BFF;
-      font-size: 1.1rem;
+      margin: 0 0 8px 0; color: #007BFF; font-size: 1.1rem;
     }
-
     .combo-card p {
-      margin: 4px 0;
-      font-size: 1rem;
-      line-height: 1.4;
+      margin: 4px 0; font-size: 1rem; line-height: 1.4;
     }
-
     .combo-retorno {
-      font-weight: bold;
-      color: green;
-      margin-top: 8px;
+      font-weight: bold; color: green; margin-top: 8px;
     }
-    
-</style>
+  </style>
 </head>
 <body>
   <h2>L.A Cashback VIP 👑</h2>
@@ -137,6 +75,22 @@
     <option value="resultado_gols">Resultado + Gols</option>
   </select>
 
+  <label for="liga">Campeonato:</label>
+  <select id="liga">
+    <option value="soccer_brazil_campeonato">Brasileirão</option>
+    <option value="soccer_epl">Premier League</option>
+    <option value="soccer_spain_la_liga">La Liga</option>
+    <option value="soccer_uefa_champs_league">Champions League</option>
+  </select>
+
+  <label for="mercado">Mercado:</label>
+  <select id="mercado">
+    <option value="h2h">1X2 (Resultado)</option>
+    <option value="btts">Ambas Marcam (BTTS)</option>
+    <option value="totals">Mais/Menos Gols (Over/Under)</option>
+    <option value="correct_score">Placar Exato</option>
+  </select>
+
   <div style="display: flex; gap: 10px;">
     <div style="flex:1">
       <label for="oddMin">Odd mínima:</label>
@@ -148,7 +102,7 @@
     </div>
   </div>
 
-  <button onclick="carregarOddsReais()">🔄 Carregar Odds Reais (Campeonato Brasileiro)</button>
+  <button onclick="carregarOddsReais()">🔄 Carregar Odds Reais</button>
 
   <input type="text" id="filtro" class="search-bar" placeholder="Filtrar por nome do time...">
 
@@ -230,12 +184,15 @@ function gerarDesdobramento() {
     <p style="color:green;"><strong>Retorno estimado se acertar todos:</strong> R$ ${totalRetorno.toFixed(2)}</p>`;
 
   document.getElementById("resultado").innerHTML = html;
-
 }
 
 async function carregarOddsReais() {
   const API_KEY = "d4d52d8e8d186ecee91808ff600dcd63";
-  const url = `https://api.the-odds-api.com/v4/sports/soccer_brazil_campeonato/odds/?regions=us&markets=h2h&oddsFormat=decimal&apiKey=${API_KEY}`;
+  const liga = document.getElementById("liga").value;
+  const mercado = document.getElementById("mercado").value;
+  const url = `https://api.the-odds-api.com/v4/sports/${liga}/odds/?regions=us&markets=${mercado}&oddsFormat=decimal&apiKey=${API_KEY}`;
+  const oddMin = parseFloat(document.getElementById("oddMin").value) || 1.10;
+  const oddMax = parseFloat(document.getElementById("oddMax").value) || 10.00;
 
   try {
     const response = await fetch(url);
@@ -243,24 +200,22 @@ async function carregarOddsReais() {
 
     const data = await response.json();
     const inputs = document.getElementById("inputs");
-    const oddMin = parseFloat(document.getElementById("oddMin").value) || 1.10;
-    const oddMax = parseFloat(document.getElementById("oddMax").value) || 10.00;
-    document.getElementById("tipoAposta").value = "simples";
-
     inputs.innerHTML = "";
     let jogoCount = 0;
 
     data.forEach(jogo => {
-      const mercado = jogo?.bookmakers?.[0]?.markets?.[0];
-      if (!mercado || mercado.outcomes.length < 3) return;
+      const mercadoData = jogo?.bookmakers?.[0]?.markets?.[0];
+      if (!mercadoData || !mercadoData.outcomes || mercadoData.outcomes.length === 0) return;
 
       let bloco = '';
       let adicionou = false;
 
-      mercado.outcomes.forEach(outcome => {
+      mercadoData.outcomes.forEach(outcome => {
         if (outcome.price >= oddMin && outcome.price <= oddMax) {
           adicionou = true;
-          const icon = outcome.name === jogo.home_team ? "🏠" : outcome.name === "Draw" ? "⚖️" : "🚩";
+          const icon = outcome.name === jogo.home_team ? "🏠" :
+                       outcome.name === "Draw" ? "⚖️" :
+                       outcome.name === jogo.away_team ? "🚩" : "🎯";
           bloco += `
             <div class="game-option">
               <input type="checkbox" class="jogoCheck"
@@ -282,7 +237,7 @@ async function carregarOddsReais() {
     });
 
     if (jogoCount === 0) {
-      inputs.innerHTML += "<p style='color:red;'>Nenhuma odd encontrada no intervalo definido.</p>";
+      inputs.innerHTML = "<p style='color:red;'>Nenhuma odd encontrada no intervalo definido.</p>";
     } else {
       alert("Selecione os resultados desejados para apostar.");
     }

@@ -150,7 +150,7 @@ function gerarDesdobramento() {
   }));
 
   const combinacoes = gerarCombinacoes(jogos, tipoDesdobramento);
-  let html = `<h3>Combinações ${tipoDesdobramento} (${document.querySelector("#tipoAposta option:checked").textContent})</h3>`;
+  let html = `<h3>Combinações ${tipoDesdobramento}</h3>`;
   let totalRetorno = 0;
 
   combinacoes.forEach((combo, i) => {
@@ -213,7 +213,7 @@ async function carregarOddsReais() {
           bloco += `
             <div class="game-option">
               <input type="checkbox" class="jogoCheck"
-                     data-nome="${jogo.home_team} vs ${jogo.away_team} - ${outcome.name}"
+                     data-nome="${jogo.home_team} vs ${jogo.away_team} - ${outcome.name}${outcome.point ? ` (${outcome.point})` : ``}"
                      data-odd="${outcome.price.toFixed(2)}" />
               <span class="icon">${icon}</span> ${outcome.name} @ ${outcome.price.toFixed(2)}
             </div>`;

@@ -74,7 +74,7 @@
 
   <label for="mercado">Mercado:</label>
   <select id="mercado">
-    <option value="Vencer">1X2 (Resultado)</option>
+    <option value="h2h">1X2 (Resultado)</option>
     <option value="btts">Ambas Marcam (BTTS)</option>
     <option value="totals">Mais/Menos Gols (Over/Under)</option>
     <option value="correct_score">Placar Exato</option>
@@ -212,7 +212,7 @@ async function carregarOddsReais() {
     let icon = "🎯";
     const nomeMercado = mercado.toLowerCase();
 
-    if (nomeMercado === "Vencer") {
+    if (nomeMercado === "h2h") {
       icon = outcome.name === jogo.home_team ? "🏠" :
              outcome.name === "Draw" ? "⚖️" :
              outcome.name === jogo.away_team ? "🚩" : "🎯";

@@ -133,7 +133,7 @@
     const liga = document.getElementById("liga").value;
     const oddMin = parseFloat(document.getElementById("oddMin").value);
     const oddMax = parseFloat(document.getElementById("oddMax").value);
-    const mercados = ["h2h", "btts", "totals", "correct_score"];
+    const mercados = ["h2h", "totals"];
     const url = `https://api.the-odds-api.com/v4/sports/${liga}/odds/?regions=us&markets=${mercados.join(",")}&oddsFormat=decimal&apiKey=${API_KEY}`;
 
     try {

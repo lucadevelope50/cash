@@ -95,6 +95,12 @@
   <label for="oddMax">Odd máxima:</label>
   <input type="number" id="oddMax" step="0.01" value="10.00">
 
+  <label for="dataInicio">Data início:</label>
+  <input type="date" id="dataInicio" />
+
+  <label for="dataFim">Data fim:</label>
+  <input type="date" id="dataFim" />
+
   <button onclick="carregarOddsReais()">🔄 Carregar Odds Reais</button>
 
   <div id="inputs"></div>
@@ -128,7 +134,16 @@
       const inputs = document.getElementById("inputs");
       inputs.innerHTML = "";
 
-      data.forEach(jogo => {
+      const dataInicio = new Date(document.getElementById("dataInicio").value);
+      const dataFim = new Date(document.getElementById("dataFim").value);
+      dataFim.setHours(23, 59, 59, 999);
+
+      const jogosFiltrados = data.filter(jogo => {
+        const dataJogo = new Date(jogo.commence_time);
+        return dataJogo >= dataInicio && dataJogo <= dataFim;
+      });
+
+      jogosFiltrados.forEach(jogo => {
         const bookmaker = jogo?.bookmakers?.[0];
         if (!bookmaker || !bookmaker.markets) return;
 
@@ -234,6 +249,13 @@
 
     document.getElementById("resultado").innerHTML = html;
   }
+
+  // Preencher data atual automaticamente
+  window.onload = function () {
+    const hoje = new Date().toISOString().split("T")[0];
+    document.getElementById("dataInicio").value = hoje;
+    document.getElementById("dataFim").value = hoje;
+  };
 </script>
 </body>
 </html>

@@ -97,15 +97,17 @@
 
   <label for="liga">Campeonato:</label>
   <select id="liga">
-  <option value="soccer_brazil_campeonato">Brasileirão Série A</option>
-  <option value="soccer_brazil_serie_b">Brasileirão Série B</option>
-  <option value="soccer_brazil_cup">Copa do Brasil</option>
-  <option value="soccer_conmebol_libertadores">Libertadores</option>
-  <option value="soccer_uefa_champs_league">Champions League</option>
-  <option value="soccer_epl">Premier League</option>
-  <option value="soccer_spain_la_liga">La Liga</option>
-</select>
+    <option value="soccer_brazil_campeonato">Brasileirão Série A</option>
+    <option value="soccer_brazil_serie_b">Brasileirão Série B</option>
+    <option value="soccer_brazil_cup">Copa do Brasil</option>
+    <option value="soccer_conmebol_libertadores">Libertadores</option>
+    <option value="soccer_uefa_champs_league">Champions League</option>
+    <option value="soccer_epl">Premier League</option>
+    <option value="soccer_spain_la_liga">La Liga</option>
+  </select>
 
+  <label for="dataFiltro">Data dos jogos:</label>
+  <input type="date" id="dataFiltro" />
 
   <label for="oddMin">Odd mínima:</label>
   <input type="number" id="oddMin" step="0.01" value="1.10">
@@ -137,6 +139,7 @@
       const liga = document.getElementById("liga").value;
       const oddMin = parseFloat(document.getElementById("oddMin").value);
       const oddMax = parseFloat(document.getElementById("oddMax").value);
+      const dataSelecionada = document.getElementById("dataFiltro").value;
       const mercados = ["h2h", "totals"];
       const url = `https://api.the-odds-api.com/v4/sports/${liga}/odds/?regions=us&markets=${mercados.join(",")}&oddsFormat=decimal&apiKey=${API_KEY}`;
 
@@ -147,6 +150,10 @@
         inputs.innerHTML = "";
 
         data.forEach(jogo => {
+          const dataJogo = new Date(jogo.commence_time);
+          const dataJogoStr = dataJogo.toISOString().split('T')[0];
+          if (dataSelecionada && dataSelecionada !== dataJogoStr) return;
+
           const bookmaker = jogo?.bookmakers?.[0];
           if (!bookmaker || !bookmaker.markets) return;
 
@@ -177,9 +184,8 @@
           });
 
           if (oddsHTML) {
-            const dataHora = new Date(jogo.commence_time);
-            const dataStr = dataHora.toLocaleDateString("pt-BR", { day: '2-digit', month: 'short' });
-            const horaStr = dataHora.toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' });
+            const dataStr = dataJogo.toLocaleDateString("pt-BR", { day: '2-digit', month: 'short' });
+            const horaStr = dataJogo.toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' });
             const nomeLiga = liga.replace("soccer_", "").replaceAll("_", " ").toUpperCase();
 
             inputs.innerHTML += `
@@ -198,9 +204,7 @@
         console.error(e);
       }
     }
-  </script>
 
-  <script>
     function gerarCombinacoes(array, k) {
       let res = [];
       function comb(start, combo) {
@@ -260,6 +264,15 @@
 
       document.getElementById("resultado").innerHTML = html;
     }
+
+    // Preenche o input de data com a data atual ao carregar a página
+    window.onload = () => {
+      const hoje = new Date();
+      const yyyy = hoje.getFullYear();
+      const mm = String(hoje.getMonth() + 1).padStart(2, '0');
+      const dd = String(hoje.getDate()).padStart(2, '0');
+      document.getElementById('dataFiltro').value = `${yyyy}-${mm}-${dd}`;
+    };
   </script>
 </body>
 </html>

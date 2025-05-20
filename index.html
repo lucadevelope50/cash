@@ -132,8 +132,7 @@
       const oddMin = parseFloat(document.getElementById("oddMin").value);
       const oddMax = parseFloat(document.getElementById("oddMax").value);
       const dataSelecionada = document.getElementById("dataFiltro").value;
-      const mercados = ["h2h", "double_chance"];
-      const url = `https://api.the-odds-api.com/v4/sports/${liga}/odds/?regions=us&markets=${mercados.join(",")}&oddsFormat=decimal&apiKey=${API_KEY}`;
+      const url = `https://api.the-odds-api.com/v4/sports/${liga}/odds/?regions=us&markets=h2h&oddsFormat=decimal&apiKey=${API_KEY}`;
 
       try {
         const res = await fetch(url);
@@ -151,21 +150,12 @@
 
           let oddsHTML = "";
           bookmaker.markets.forEach(mercado => {
-            let nomeMercado = mercado.key;
-            if (nomeMercado === "h2h") nomeMercado = "1X2";
-            if (nomeMercado === "double_chance") nomeMercado = "Chance Dupla";
+            if (mercado.key !== "h2h") return;
 
-            oddsHTML += `<div style="margin-bottom: 10px;"><strong>${nomeMercado}:</strong><br>`;
+            oddsHTML += `<div style="margin-bottom: 10px;"><strong>1X2:</strong><br>`;
 
             mercado.outcomes.forEach(outcome => {
               let nome = outcome.name;
-
-              if (mercado.key === "double_chance") {
-                if (nome === "home_or_draw") nome = "1X (Casa ou Empate)";
-                if (nome === "away_or_draw") nome = "X2 (Fora ou Empate)";
-                if (nome === "home_or_away") nome = "12 (Casa ou Fora)";
-              }
-
               if (nome.toLowerCase() === "draw") nome = "Empate";
 
               if (outcome.price >= oddMin && outcome.price <= oddMax) {

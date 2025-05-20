@@ -132,7 +132,7 @@
       const oddMin = parseFloat(document.getElementById("oddMin").value);
       const oddMax = parseFloat(document.getElementById("oddMax").value);
       const dataSelecionada = document.getElementById("dataFiltro").value;
-      const mercados = ["h2h", "totals"];
+      const mercados = ["h2h", "double_chance"];
       const url = `https://api.the-odds-api.com/v4/sports/${liga}/odds/?regions=us&markets=${mercados.join(",")}&oddsFormat=decimal&apiKey=${API_KEY}`;
 
       try {
@@ -153,20 +153,17 @@
           bookmaker.markets.forEach(mercado => {
             let nomeMercado = mercado.key;
             if (nomeMercado === "h2h") nomeMercado = "1X2";
-            if (nomeMercado === "totals") nomeMercado = "Total de Gols";
+            if (nomeMercado === "double_chance") nomeMercado = "Chance Dupla";
 
             oddsHTML += `<div style="margin-bottom: 10px;"><strong>${nomeMercado}:</strong><br>`;
 
             mercado.outcomes.forEach(outcome => {
               let nome = outcome.name;
 
-              if (mercado.key === "totals") {
-                const ponto = mercado.point ?? outcome.point ?? "?";
-                if (outcome.name.toLowerCase() === "over") {
-                  nome = `Acima de ${ponto}`;
-                } else if (outcome.name.toLowerCase() === "under") {
-                  nome = `Abaixo de ${ponto}`;
-                }
+              if (mercado.key === "double_chance") {
+                if (nome === "home_or_draw") nome = "1X (Casa ou Empate)";
+                if (nome === "away_or_draw") nome = "X2 (Fora ou Empate)";
+                if (nome === "home_or_away") nome = "12 (Casa ou Fora)";
               }
 
               if (nome.toLowerCase() === "draw") nome = "Empate";
@@ -267,7 +264,6 @@
       document.getElementById("resultado").innerHTML = html;
     }
 
-    // Define data atual automaticamente no filtro
     document.addEventListener("DOMContentLoaded", () => {
       const hoje = new Date().toISOString().split('T')[0];
       document.getElementById("dataFiltro").value = hoje;

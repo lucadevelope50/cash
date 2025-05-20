@@ -174,8 +174,10 @@
               if (outcome.price >= oddMin && outcome.price <= oddMax) {
                 oddsHTML += `
                   <label>
-                    <input type="checkbox" class="jogoCheck" data-nome="${nome}" data-odd="${outcome.price.toFixed(2)}" />
-                    ${nome}: ${outcome.price.toFixed(2)}
+                    <input type="checkbox" class="jogoCheck"
+                           data-nome="${nome} (Odd: ${outcome.price.toFixed(2)})"
+                           data-odd="${outcome.price.toFixed(2)}" />
+                    ${nome} – Odd: ${outcome.price.toFixed(2)}
                   </label>`;
               }
             });
@@ -264,15 +266,6 @@
 
       document.getElementById("resultado").innerHTML = html;
     }
-
-    // Preenche o input de data com a data atual ao carregar a página
-    window.onload = () => {
-      const hoje = new Date();
-      const yyyy = hoje.getFullYear();
-      const mm = String(hoje.getMonth() + 1).padStart(2, '0');
-      const dd = String(hoje.getDate()).padStart(2, '0');
-      document.getElementById('dataFiltro').value = `${yyyy}-${mm}-${dd}`;
-    };
   </script>
 </body>
 </html>

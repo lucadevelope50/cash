@@ -150,7 +150,7 @@
         const mercado = bookmaker.markets.find(m => m.key === "h2h");
         if (!mercado) return;
 
-        let oddsHTML = `<div style="margin-bottom: 10px;"><strong>1X2:</strong><br>`;
+        let oddsHTML = `<div style="margin-bottom: 10px;"><strong>Para vencer:</strong><br>`;
 
         mercado.outcomes.forEach(outcome => {
           let nome = outcome.name;

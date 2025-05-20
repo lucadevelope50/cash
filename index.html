@@ -34,7 +34,6 @@
     button:hover {
       background-color: #0056b3;
     }
-
     .jogo-card {
       border: 1px solid #ccc;
       border-radius: 8px;
@@ -42,7 +41,6 @@
       overflow: hidden;
       background: white;
     }
-
     .jogo-header {
       background-color: #0a2c5a;
       color: white;
@@ -50,13 +48,11 @@
       font-weight: bold;
       font-size: 0.95rem;
     }
-
     .jogo-conteudo {
       display: flex;
       flex-direction: column;
       padding: 12px;
     }
-
     .jogo-info {
       text-align: center;
       font-size: 0.95rem;
@@ -64,13 +60,11 @@
       font-weight: bold;
       margin-bottom: 8px;
     }
-
     .jogo-times {
       text-align: center;
       font-weight: 600;
       margin-bottom: 10px;
     }
-
     .jogo-odds label {
       background-color: #0a2c5a;
       color: white;
@@ -81,12 +75,10 @@
       display: inline-block;
       margin: 5px 5px 0 0;
     }
-
     .jogo-odds input {
       transform: scale(1.2);
       margin-right: 6px;
     }
-
     #resultado {
       margin-top: 20px;
     }
@@ -167,9 +159,17 @@
 
             mercado.outcomes.forEach(outcome => {
               let nome = outcome.name;
+
+              if (mercado.key === "totals") {
+                const ponto = mercado.point ?? outcome.point ?? "?";
+                if (outcome.name.toLowerCase() === "over") {
+                  nome = `Acima de ${ponto}`;
+                } else if (outcome.name.toLowerCase() === "under") {
+                  nome = `Abaixo de ${ponto}`;
+                }
+              }
+
               if (nome.toLowerCase() === "draw") nome = "Empate";
-              if (nome.toLowerCase() === "over") nome = `Acima de ${mercado?.point ?? ''}`;
-              if (nome.toLowerCase() === "under") nome = `Abaixo de ${mercado?.point ?? ''}`;
 
               if (outcome.price >= oddMin && outcome.price <= oddMax) {
                 oddsHTML += `
@@ -266,6 +266,12 @@
 
       document.getElementById("resultado").innerHTML = html;
     }
+
+    // Define data atual automaticamente no filtro
+    document.addEventListener("DOMContentLoaded", () => {
+      const hoje = new Date().toISOString().split('T')[0];
+      document.getElementById("dataFiltro").value = hoje;
+    });
   </script>
 </body>
 </html>

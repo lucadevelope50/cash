@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -54,36 +53,22 @@
 
     .jogo-conteudo {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
       padding: 12px;
-      flex-wrap: wrap;
     }
 
     .jogo-info {
       text-align: center;
       font-size: 0.85rem;
       color: #444;
-      width: 80px;
-    }
-
-    .jogo-data {
-      font-weight: bold;
+      width: 100%;
+      margin-bottom: 10px;
     }
 
     .jogo-times {
-      flex: 1;
-      padding: 0 10px;
-    }
-
-    .time-nome {
-      margin: 4px 0;
+      text-align: center;
       font-weight: 600;
-    }
-
-    .jogo-odds {
-      display: flex;
-      gap: 10px;
+      margin-bottom: 10px;
     }
 
     .jogo-odds label {
@@ -91,15 +76,15 @@
       color: white;
       padding: 6px 12px;
       border-radius: 6px;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      display: inline-block;
+      margin: 5px 5px 0 0;
     }
 
     .jogo-odds input {
       transform: scale(1.2);
+      margin-right: 6px;
     }
 
     #resultado {
@@ -116,14 +101,6 @@
     <option value="soccer_epl">Premier League</option>
     <option value="soccer_spain_la_liga">La Liga</option>
     <option value="soccer_uefa_champs_league">Champions League</option>
-  </select>
-
-  <label for="mercado">Mercado:</label>
-  <select id="mercado">
-    <option value="h2h">1X2 (Resultado)</option>
-    <option value="btts">Ambas Marcam (BTTS)</option>
-    <option value="totals">Mais/Menos Gols (Over/Under)</option>
-    <option value="correct_score">Placar Exato</option>
   </select>
 
   <label for="oddMin">Odd mínima:</label>
@@ -154,10 +131,10 @@
   async function carregarOddsReais() {
     const API_KEY = "d4d52d8e8d186ecee91808ff600dcd63";
     const liga = document.getElementById("liga").value;
-    const mercado = document.getElementById("mercado").value;
     const oddMin = parseFloat(document.getElementById("oddMin").value);
     const oddMax = parseFloat(document.getElementById("oddMax").value);
-    const url = `https://api.the-odds-api.com/v4/sports/${liga}/odds/?regions=us&markets=${mercado}&oddsFormat=decimal&apiKey=${API_KEY}`;
+    const mercados = ["h2h", "btts", "totals", "correct_score"];
+    const url = `https://api.the-odds-api.com/v4/sports/${liga}/odds/?regions=us&markets=${mercados.join(",")}&oddsFormat=decimal&apiKey=${API_KEY}`;
 
     try {
       const res = await fetch(url);
@@ -166,20 +143,23 @@
       inputs.innerHTML = "";
 
       data.forEach(jogo => {
-        const mercadoData = jogo?.bookmakers?.[0]?.markets?.[0];
-        if (!mercadoData || !mercadoData.outcomes) return;
+        const bookmaker = jogo?.bookmakers?.[0];
+        if (!bookmaker || !bookmaker.markets) return;
 
         let oddsHTML = "";
-        const rotulos1x2 = ["Casa", "Empate", "Fora"];
-        mercadoData.outcomes.forEach((outcome, index) => {
-          if (outcome.price >= oddMin && outcome.price <= oddMax) {
-            let rotulo = mercado === "h2h" ? rotulos1x2[index] || outcome.name : outcome.name;
-            oddsHTML += `
-              <label>
-                <input type="checkbox" class="jogoCheck" data-nome="${rotulo === 'Casa' ? jogo.home_team : rotulo === 'Fora' ? jogo.away_team : 'Empate'} (${rotulo})" data-odd="${outcome.price.toFixed(2)}" />
-                <span><strong>${rotulo}:</strong> ${outcome.price.toFixed(2)}</span>
-              </label>`;
-          }
+        bookmaker.markets.forEach(mercado => {
+          if (!mercado.outcomes) return;
+          oddsHTML += `<div><strong>${mercado.key.toUpperCase()}:</strong><br>`;
+          mercado.outcomes.forEach(outcome => {
+            if (outcome.price >= oddMin && outcome.price <= oddMax) {
+              oddsHTML += `
+                <label>
+                  <input type="checkbox" class="jogoCheck" data-nome="${outcome.name}" data-odd="${outcome.price.toFixed(2)}" />
+                  ${outcome.name}: ${outcome.price.toFixed(2)}
+                </label><br>`;
+            }
+          });
+          oddsHTML += `</div>`;
         });
 
         if (oddsHTML) {
@@ -192,19 +172,9 @@
             <div class="jogo-card">
               <div class="jogo-header">${nomeLiga}</div>
               <div class="jogo-conteudo">
-                <div class="jogo-info">
-                  <div class="jogo-data">${dataStr}</div>
-                  <div class="jogo-hora">${horaStr}</div>
-                </div>
-                <div class="jogo-times">
-                  <div class="time-nome">⚽ ${jogo.home_team}</div>
-                  <div class="time-nome">🟢 ${jogo.away_team}</div>
-                </div>
+                <div class="jogo-info">${dataStr} ${horaStr}</div>
+                <div class="jogo-times">⚽ ${jogo.home_team} vs 🟢 ${jogo.away_team}</div>
                 <div class="jogo-odds">${oddsHTML}</div>
-    <button onclick="mostrarOddsExtras('${jogo.id}')" style="margin-top: 10px; background: #007bff; color: white; padding: 6px 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
-      +Mais Odds
-    </button>
-    <div id="extras-${jogo.id}" style="display:none; margin-top: 10px; padding:10px; background:#eef; border-radius:6px;"></div>
               </div>
             </div>`;
         }
@@ -248,7 +218,7 @@
     }));
 
     const combinacoes = gerarCombinacoes(jogos, tipoDesdobramento);
-    let html = `<h3>Combinações ${tipoDesdobramento} (Simples 1X2)</h3>`;
+    let html = `<h3>Combinações ${tipoDesdobramento}</h3>`;
     let totalRetorno = 0;
 
     combinacoes.forEach((combo, i) => {
@@ -273,17 +243,6 @@
       <p style="color:green;"><strong>Retorno estimado se acertar todos:</strong> R$ ${totalRetorno.toFixed(2)}</p>`;
 
     document.getElementById("resultado").innerHTML = html;
-  }
-
-  function mostrarOddsExtras(jogoId) {
-    const divExtras = document.getElementById(`extras-${jogoId}`);
-    if (divExtras.style.display === "none") {
-      divExtras.style.display = "block";
-      divExtras.innerHTML = "<em>Carregando odds extras...</em>";
-      // Aqui você pode adicionar lógica futura para buscar mais mercados da API
-    } else {
-      divExtras.style.display = "none";
-    }
   }
 </script>
 

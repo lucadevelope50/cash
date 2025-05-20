@@ -141,7 +141,7 @@
       data.forEach(jogo => {
         const fixture = jogo.fixture;
         const times = jogo.teams;
-        const apostas = jogo.bookmakers?.[0]?.bets?.[0]?.values || [];
+        const apostas = jogo.bookmakers?.[0]?.bets?.find(b => b.id === 1)?.values || [];
 
         let oddsHTML = `<div style="margin-bottom: 10px;"><strong>Para Vencer:</strong><br>`;
 
@@ -167,7 +167,7 @@
 
         inputs.innerHTML += `
           <div class="jogo-card">
-            <div class="jogo-header">LIGA ID: ${ligaId}</div>
+            <div class="jogo-header">Liga ID: ${ligaId}</div>
             <div class="jogo-conteudo">
               <div class="jogo-info">🗓️ ${dataStr} às ${horaStr}</div>
               <div class="jogo-times">⚽ ${times.home.name} vs 🟢 ${times.away.name}</div>
@@ -176,7 +176,7 @@
           </div>`;
       });
     } catch (e) {
-      alert("Erro ao carregar dados da API-Football.");
+      alert("Erro ao carregar odds. Verifique sua chave de API ou o campeonato selecionado.");
       console.error(e);
     }
   }
@@ -250,21 +250,7 @@
 
     const janela = window.open('', '', 'width=800,height=600');
     janela.document.write(`
-      <html>
-      <head>
-        <title>Bilhetes - L.A Cashback VIP 👑</title>
-        <style>
-          body { font-family: Arial, sans-serif; padding: 20px; }
-          .bilhete { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
-          .titulo { font-weight: bold; color: #007bff; margin-bottom: 5px; }
-          .retorno { color: green; font-weight: bold; }
-        </style>
-      </head>
-      <body>
-        <h2>Bilhetes - L.A Cashback VIP 👑</h2>
-        ${resultado.innerHTML}
-      </body>
-      </html>
+      <html><head><title>Bilhetes</title></head><body>${resultado.innerHTML}</body></html>
     `);
     janela.document.close();
     janela.print();

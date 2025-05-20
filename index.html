@@ -135,7 +135,6 @@
 
       const data = await res.json();
       const jogos = data.matches;
-
       inputs.innerHTML = "";
 
       jogos.forEach(jogo => {
@@ -147,21 +146,23 @@
 
         const odds = jogo.odds;
 
-        if (!odds || !odds.homeWin) return; // odds só disponíveis no plano premium
+        let oddsHTML = "";
 
-        let oddsHTML = `<div><strong>Para Vencer:</strong><br>`;
-
-        if (odds.homeWin >= oddMin && odds.homeWin <= oddMax) {
-          oddsHTML += `<label><input type="checkbox" class="jogoCheck" data-nome="${home}" data-odd="${odds.homeWin}" /> ${home} - ${odds.homeWin}</label><br>`;
+        if (odds && odds.homeWin) {
+          oddsHTML = `<div><strong>Para Vencer:</strong><br>`;
+          if (odds.homeWin >= oddMin && odds.homeWin <= oddMax) {
+            oddsHTML += `<label><input type="checkbox" class="jogoCheck" data-nome="${home}" data-odd="${odds.homeWin}" /> ${home} - ${odds.homeWin}</label><br>`;
+          }
+          if (odds.draw >= oddMin && odds.draw <= oddMax) {
+            oddsHTML += `<label><input type="checkbox" class="jogoCheck" data-nome="Empate" data-odd="${odds.draw}" /> Empate - ${odds.draw}</label><br>`;
+          }
+          if (odds.awayWin >= oddMin && odds.awayWin <= oddMax) {
+            oddsHTML += `<label><input type="checkbox" class="jogoCheck" data-nome="${away}" data-odd="${odds.awayWin}" /> ${away} - ${odds.awayWin}</label>`;
+          }
+          oddsHTML += `</div>`;
+        } else {
+          oddsHTML = "<div><em>❌ Odds indisponíveis neste plano.</em></div>";
         }
-        if (odds.draw >= oddMin && odds.draw <= oddMax) {
-          oddsHTML += `<label><input type="checkbox" class="jogoCheck" data-nome="Empate" data-odd="${odds.draw}" /> Empate - ${odds.draw}</label><br>`;
-        }
-        if (odds.awayWin >= oddMin && odds.awayWin <= oddMax) {
-          oddsHTML += `<label><input type="checkbox" class="jogoCheck" data-nome="${away}" data-odd="${odds.awayWin}" /> ${away} - ${odds.awayWin}</label>`;
-        }
-
-        oddsHTML += `</div>`;
 
         inputs.innerHTML += `
           <div class="jogo-card">
@@ -175,19 +176,125 @@
       });
 
       if (inputs.innerHTML === "") {
-        inputs.innerHTML = "<p>❌ Nenhum jogo com odds disponíveis nesta liga no momento.</p>";
+        inputs.innerHTML = "<p>❌ Nenhum jogo com odds disponíveis.</p>";
       }
 
     } catch (error) {
-      alert("Erro ao carregar jogos da Football-Data.org.");
+      alert("Erro ao carregar jogos.");
       console.error(error);
     }
   }
 
-  // A partir daqui o restante do seu script permanece igual
-  // (gerarCombinacoes, gerarDesdobramento, exportarPDF, compartilharWhatsApp)
+  function gerarCombinacoes(array, k) {
+    let res = [];
+    function comb(start, combo) {
+      if (combo.length === k) return res.push(combo);
+      for (let i = start; i < array.length; i++) {
+        comb(i + 1, combo.concat([array[i]]));
+      }
+    }
+    comb(0, []);
+    return res;
+  }
 
-  // Cole aqui todas as funções complementares que você já tem
+  function gerarDesdobramento() {
+    const tipoDesdobramento = parseInt(document.getElementById("tipoDesdobramento").value);
+    const stake = parseFloat(document.getElementById("stake").value);
+    const checkboxes = document.querySelectorAll(".jogoCheck:checked");
+
+    if (checkboxes.length < tipoDesdobramento) {
+      alert(`Você selecionou apenas ${checkboxes.length} jogos, mas escolheu um desdobramento de ${tipoDesdobramento}.`);
+      return;
+    }
+
+    if (isNaN(stake) || stake <= 0) {
+      alert("Insira valor de aposta válido.");
+      return;
+    }
+
+    const jogos = Array.from(checkboxes).map(cb => ({
+      jogo: cb.dataset.nome,
+      odd: parseFloat(cb.dataset.odd)
+    }));
+
+    const combinacoes = gerarCombinacoes(jogos, tipoDesdobramento);
+    let html = `<h3>Combinações ${tipoDesdobramento}</h3>`;
+    let totalRetorno = 0;
+
+    combinacoes.forEach((combo, i) => {
+      const oddTotal = combo.reduce((acc, cur) => acc * cur.odd, 1);
+      const retorno = stake * oddTotal;
+      totalRetorno += retorno;
+
+      const selecoes = combo.map(j => `- ${j.jogo}`).join("<br>");
+
+      html += `
+        <div style="background:#fff;border-radius:10px;padding:12px;margin-bottom:15px;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+          <div style="color:#007BFF;font-weight:bold;font-size:1rem;">Bilhete ${i + 1} - Odd Total: ${oddTotal.toFixed(2)}</div>
+          <div style="margin:6px 0 8px 0;font-size:0.95rem;line-height:1.4;">${selecoes}</div>
+          <div style="color:green;font-weight:bold;font-size:0.95rem;">Retorno: R$ ${retorno.toFixed(2)}</div>
+        </div>`;
+    });
+
+    const totalApostado = (combinacoes.length * stake).toFixed(2);
+    html += `
+      <p><strong>Total de combinações:</strong> ${combinacoes.length}</p>
+      <p><strong>Total Apostado:</strong> R$ ${totalApostado}</p>
+      <p style="color:green;"><strong>Retorno estimado se acertar todos:</strong> R$ ${totalRetorno.toFixed(2)}</p>`;
+
+    document.getElementById("resultado").innerHTML = html;
+  }
+
+  function exportarPDF() {
+    const resultado = document.getElementById("resultado");
+    if (!resultado.innerHTML.trim()) {
+      alert("Gere os bilhetes antes de exportar.");
+      return;
+    }
+
+    const janela = window.open('', '', 'width=800,height=600');
+    janela.document.write(`
+      <html>
+      <head>
+        <title>Bilhetes - L.A Cashback VIP 👑</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; }
+          .bilhete { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+          .titulo { font-weight: bold; color: #007bff; margin-bottom: 5px; }
+          .retorno { color: green; font-weight: bold; }
+        </style>
+      </head>
+      <body>
+        <h2>Bilhetes - L.A Cashback VIP 👑</h2>
+        ${resultado.innerHTML}
+      </body>
+      </html>
+    `);
+    janela.document.close();
+    janela.print();
+  }
+
+  function compartilharWhatsApp() {
+    const resultado = document.getElementById("resultado");
+    if (!resultado.innerHTML.trim()) {
+      alert("Gere os bilhetes antes de compartilhar.");
+      return;
+    }
+
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = resultado.innerHTML;
+    let texto = tempDiv.innerText;
+
+    texto = "🔥 *L.A Cashback VIP 👑* 🔥\n\n" + texto.trim();
+    texto = texto.replace(/Bilhete (\d+)/g, "🎟️ Bilhete $1");
+    texto = texto.replace(/Retorno: R\$/, "💰 Retorno: R$");
+    texto = texto.replace(/Total Apostado:/, "💸 Total Apostado:");
+    texto = texto.replace(/Total de combinações:/, "📦 Total de combinações:");
+    texto = texto.replace(/Retorno estimado se acertar todos:/, "🔮 Retorno máximo:");
+
+    const url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
+    window.open(url, "_blank");
+  }
 </script>
 
 </body>

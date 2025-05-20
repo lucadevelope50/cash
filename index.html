@@ -95,12 +95,6 @@
   <label for="oddMax">Odd máxima:</label>
   <input type="number" id="oddMax" step="0.01" value="10.00">
 
-  <label for="dataInicio">Data início:</label>
-  <input type="date" id="dataInicio" />
-
-  <label for="dataFim">Data fim:</label>
-  <input type="date" id="dataFim" />
-
   <button onclick="carregarOddsReais()">🔄 Carregar Odds Reais</button>
 
   <div id="inputs"></div>
@@ -118,7 +112,7 @@
   <input type="number" step="0.01" placeholder="Valor por combinação (R$)" id="stake" value="10" />
   <button onclick="gerarDesdobramento()">Gerar L.A Cashback VIP 👑</button>
   <button onclick="exportarPDF()">📄 Exportar como PDF</button>
-  <button onclick="exportarTXT()">📄 Exportar como TXT</button>
+  <button onclick="compartilharWhatsApp()">📤 Compartilhar no WhatsApp</button>
 
   <div id="resultado"></div>
 
@@ -136,16 +130,7 @@
       const inputs = document.getElementById("inputs");
       inputs.innerHTML = "";
 
-      const dataInicio = new Date(document.getElementById("dataInicio").value);
-      const dataFim = new Date(document.getElementById("dataFim").value);
-      dataFim.setHours(23, 59, 59, 999);
-
-      const jogosFiltrados = data.filter(jogo => {
-        const dataJogo = new Date(jogo.commence_time);
-        return dataJogo >= dataInicio && dataJogo <= dataFim;
-      });
-
-      jogosFiltrados.forEach(jogo => {
+      data.forEach(jogo => {
         const bookmaker = jogo?.bookmakers?.[0];
         if (!bookmaker || !bookmaker.markets) return;
 
@@ -281,31 +266,28 @@
     janela.print();
   }
 
-  function exportarTXT() {
+  function compartilharWhatsApp() {
     const resultado = document.getElementById("resultado");
     if (!resultado.innerHTML.trim()) {
-      alert("Gere os bilhetes antes de exportar.");
+      alert("Gere os bilhetes antes de compartilhar.");
       return;
     }
 
     const tempDiv = document.createElement("div");
     tempDiv.innerHTML = resultado.innerHTML;
-    const textoLimpo = tempDiv.innerText;
+    let texto = tempDiv.innerText;
 
-    const blob = new Blob([textoLimpo], { type: "text/plain;charset=utf-8" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "bilhetes_LA_Cashback_VIP.txt";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    texto = "🔥 *L.A Cashback VIP 👑* 🔥\n\n" + texto.trim();
+    texto = texto.replace(/Bilhete (\d+)/g, "🎟️ Bilhete $1");
+    texto = texto.replace(/Retorno: R\$/, "💰 Retorno: R$");
+    texto = texto.replace(/Total Apostado:/, "💸 Total Apostado:");
+    texto = texto.replace(/Total de combinações:/, "📦 Total de combinações:");
+    texto = texto.replace(/Retorno estimado se acertar todos:/, "🔮 Retorno máximo:");
+
+    const url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
+    window.open(url, "_blank");
   }
-
-  window.onload = function () {
-    const hoje = new Date().toISOString().split("T")[0];
-    document.getElementById("dataInicio").value = hoje;
-    document.getElementById("dataFim").value = hoje;
-  };
 </script>
+
 </body>
 </html>

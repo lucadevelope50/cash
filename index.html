@@ -183,7 +183,7 @@
     const liga = document.getElementById("liga").value;
     const oddMin = parseFloat(document.getElementById("oddMin").value);
     const oddMax = parseFloat(document.getElementById("oddMax").value);
-    const url = `https://api.the-odds-api.com/v4/sports/${liga}/odds/?regions=eu&markets=h2h,spreads,totals&oddsFormat=decimal&apiKey=${API_KEY}`;
+    const url = `https://api.the-odds-api.com/v4/sports/${liga}/odds/?regions=eu&markets=h2h,totals&oddsFormat=decimal&apiKey=${API_KEY}`;
 
     try {
       const res = await fetch(url);
@@ -195,7 +195,7 @@
         const bookmaker = jogo?.bookmakers?.[0];
         if (!bookmaker || !bookmaker.markets) return;
 
-        const mercado = bookmaker.markets.find(m => m.key === "h2h");
+        const mercado = bookmaker.markets.find(m => m.key === "h2h,totals");
         if (!mercado) return;
 
         let oddsHTML = `<div style="margin-bottom: 10px;"><strong>Para Vencer:</strong><br>`;

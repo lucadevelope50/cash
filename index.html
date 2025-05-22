@@ -195,25 +195,38 @@
         const bookmaker = jogo?.bookmakers?.[0];
         if (!bookmaker || !bookmaker.markets) return;
 
-        const mercado = bookmaker.markets.find(m => m.key === "h2h,totals");
-        if (!mercado) return;
+        let oddsHTML = `<div style="margin-bottom: 10px;"><strong>${jogo.home_team} x ${jogo.away_team}</strong><br>`;
 
-        let oddsHTML = `<div style="margin-bottom: 10px;"><strong>Para Vencer:</strong><br>`;
+        bookmaker.markets.forEach(mercado => {
+          let nomeMercado = mercado.key === "h2h" ? "Para Vencer" : "Total de Gols";
 
-        mercado.outcomes.forEach(outcome => {
-          let nome = outcome.name;
-          if (nome.toLowerCase() === "draw") nome = "Empate";
-          if (nome.toLowerCase() === "home") nome = jogo.home_team;
-          if (nome.toLowerCase() === "away") nome = jogo.away_team;
+          oddsHTML += `<br><strong>${nomeMercado}:</strong><br>`;
 
-          if (outcome.price >= oddMin && outcome.price <= oddMax) {
-            oddsHTML += `
-              <label>
-                <input type="checkbox" class="jogoCheck" data-nome="${nome}" data-odd="${outcome.price.toFixed(2)}" />
-                ${nome} - ${outcome.price.toFixed(2)}
-              </label>`;
-          }
+          mercado.outcomes.forEach(outcome => {
+            let nome = outcome.name;
+
+            if (nome.toLowerCase() === "draw") nome = "Empate";
+            if (nome.toLowerCase() === "home") nome = jogo.home_team;
+            if (nome.toLowerCase() === "away") nome = jogo.away_team;
+
+            if (outcome.price >= oddMin && outcome.price <= oddMax) {
+              oddsHTML += `
+                <label>
+                  <input type="checkbox" class="jogoCheck" data-nome="${nome}" data-odd="${outcome.price.toFixed(2)}" />
+                  ${nome} - ${outcome.price.toFixed(2)}
+                </label><br>`;
+            }
+          });
         });
+
+        oddsHTML += `</div>`;
+        inputs.innerHTML += oddsHTML;
+      });
+    } catch (error) {
+      console.error("Erro ao carregar odds:", error);
+    }
+  }
+
 
         oddsHTML += `</div>`;
 

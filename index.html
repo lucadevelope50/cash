@@ -177,56 +177,62 @@
 </div>
 
 
- <script>
-  async function carregarOddsReais() {
-    const API_KEY = "d4d52d8e8d186ecee91808ff600dcd63";
-    const liga = document.getElementById("liga").value;
-    const oddMin = parseFloat(document.getElementById("oddMin").value);
-    const oddMax = parseFloat(document.getElementById("oddMax").value);
-    const url = `https://api.the-odds-api.com/v4/sports/${liga}/odds/?regions=eu&markets=h2h,totals&oddsFormat=decimal&apiKey=${API_KEY}`;
+ <body>
+  <!-- seus inputs, botões, etc -->
 
-    try {
-      const res = await fetch(url);
-      const data = await res.json();
-      const inputs = document.getElementById("inputs");
-      inputs.innerHTML = "";
+  <button onclick="carregarOddsReais()">Carregar Odds</button>
 
-      data.forEach(jogo => {
-        const bookmaker = jogo?.bookmakers?.[0];
-        if (!bookmaker || !bookmaker.markets) return;
+  <div id="inputs"></div>
 
-        let oddsHTML = `<div style="margin-bottom: 10px;"><strong>${jogo.home_team} x ${jogo.away_team}</strong><br>`;
+  <script>
+    async function carregarOddsReais() {
+      const API_KEY = "SUA_API_KEY";
+      const liga = document.getElementById("liga").value;
+      const oddMin = parseFloat(document.getElementById("oddMin").value);
+      const oddMax = parseFloat(document.getElementById("oddMax").value);
+      const url = `https://api.the-odds-api.com/v4/sports/${liga}/odds/?regions=eu&markets=h2h,totals&oddsFormat=decimal&apiKey=${API_KEY}`;
 
-        bookmaker.markets.forEach(mercado => {
-          let nomeMercado = mercado.key === "h2h" ? "Para Vencer" : "Total de Gols";
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        const inputs = document.getElementById("inputs");
+        inputs.innerHTML = "";
 
-          oddsHTML += `<br><strong>${nomeMercado}:</strong><br>`;
+        data.forEach(jogo => {
+          const bookmaker = jogo?.bookmakers?.[0];
+          if (!bookmaker || !bookmaker.markets) return;
 
-          mercado.outcomes.forEach(outcome => {
-            let nome = outcome.name;
+          let oddsHTML = `<div style="margin-bottom: 10px;"><strong>${jogo.home_team} x ${jogo.away_team}</strong><br>`;
 
-            if (nome.toLowerCase() === "draw") nome = "Empate";
-            if (nome.toLowerCase() === "home") nome = jogo.home_team;
-            if (nome.toLowerCase() === "away") nome = jogo.away_team;
+          bookmaker.markets.forEach(mercado => {
+            let nomeMercado = mercado.key === "h2h" ? "Para Vencer" : "Total de Gols";
+            oddsHTML += `<br><strong>${nomeMercado}:</strong><br>`;
 
-            if (outcome.price >= oddMin && outcome.price <= oddMax) {
-              oddsHTML += `
-                <label>
-                  <input type="checkbox" class="jogoCheck" data-nome="${nome}" data-odd="${outcome.price.toFixed(2)}" />
-                  ${nome} - ${outcome.price.toFixed(2)}
-                </label><br>`;
-            }
+            mercado.outcomes.forEach(outcome => {
+              let nome = outcome.name;
+
+              if (nome.toLowerCase() === "draw") nome = "Empate";
+              if (nome.toLowerCase() === "home") nome = jogo.home_team;
+              if (nome.toLowerCase() === "away") nome = jogo.away_team;
+
+              if (outcome.price >= oddMin && outcome.price <= oddMax) {
+                oddsHTML += `
+                  <label>
+                    <input type="checkbox" class="jogoCheck" data-nome="${nome}" data-odd="${outcome.price.toFixed(2)}" />
+                    ${nome} - ${outcome.price.toFixed(2)}
+                  </label><br>`;
+              }
+            });
           });
+
+          oddsHTML += `</div>`;
+          inputs.innerHTML += oddsHTML;
         });
-
-        oddsHTML += `</div>`;
-        inputs.innerHTML += oddsHTML;
-      });
-    } catch (error) {
-      console.error("Erro ao carregar odds:", error);
+      } catch (error) {
+        console.error("Erro ao carregar odds:", error);
+      }
     }
-  }
-
+  
 
         oddsHTML += `</div>`;
 

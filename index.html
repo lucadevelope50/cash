@@ -97,21 +97,36 @@ function traduzirValorOdd(valor) {
         "Home": "Casa",
         "Draw": "Empate",
         "Away": "Visitante",
-        "Over": "Acima",
-        "Under": "Abaixo",
+        "Over 0.5": "Acima de 0.5",
+        "Over 1.5": "Acima de 1.5",
+        "Over 2.5": "Acima de 2.5",
+        "Over 3.5": "Acima de 3.5",
+        "Under 0.5": "Abaixo de 0.5",
+        "Under 1.5": "Abaixo de 1.5",
+        "Under 2.5": "Abaixo de 2.5",
+        "Under 3.5": "Abaixo de 3.5",
         "Yes": "Sim",
         "No": "Não"
     };
-
-    const partes = valor.split(' ');
-    const primeiraPalavra = partes[0];
-
-    if (traducoes[primeiraPalavra]) {
-        partes[0] = traducoes[primeiraPalavra];
-    }
-
-    return partes.join(' ');
+    return traducoes[valor] || valor;
 }
+
+
+function traduzirMercado(nomeOriginal) {
+    const traducoes = {
+        "Match Winner": "Resultado Final",
+        "Second Half Winner": "Resultado 2º Tempo",
+        "Asian Handicap": "Handicap Asiático",
+        "Over/Under 1.5 Goals": "Acima/Abaixo 1.5 Gols",
+        "Over/Under 2.5 Goals": "Acima/Abaixo 2.5 Gols",
+        "Both Teams to Score": "Ambas Marcam",
+        "Correct Score": "Placar Correto",
+        "Total Goals": "Total de Gols",
+        "First Half Winner": "Resultado 1º Tempo"
+    };
+    return traducoes[nomeOriginal] || nomeOriginal;
+}
+
 async function carregarOddsReais() {
     const API_KEY = "69b92fb729838ba69139a6d92c457f83";
     const ligaID = document.getElementById("liga").value;
@@ -190,7 +205,7 @@ async function carregarOddsReais() {
         alert('Erro ao carregar odds. Veja o console para mais detalhes.');
     }
 }
-  
+
 function gerarCombinacoes(array, k) {
   let res = [];
   function comb(start, combo) {

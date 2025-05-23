@@ -91,6 +91,22 @@
   </div>
 
 <script>
+
+function traduzirMercado(nomeOriginal) {
+    const traducoes = {
+        "Match Winner": "Resultado Final",
+        "Second Half Winner": "Resultado 2º Tempo",
+        "Asian Handicap": "Handicap Asiático",
+        "Over/Under 1.5 Goals": "Acima/Abaixo 1.5 Gols",
+        "Over/Under 2.5 Goals": "Acima/Abaixo 2.5 Gols",
+        "Both Teams to Score": "Ambas Marcam",
+        "Correct Score": "Placar Correto",
+        "Total Goals": "Total de Gols",
+        "First Half Winner": "Resultado 1º Tempo"
+    };
+    return traducoes[nomeOriginal] || nomeOriginal;
+}
+
 async function carregarOddsReais() {
     const API_KEY = "69b92fb729838ba69139a6d92c457f83";
     const ligaID = document.getElementById("liga").value;
@@ -134,7 +150,7 @@ async function carregarOddsReais() {
 
             let oddsHTML = "";
             bets.forEach(bet => {
-                oddsHTML += `<div style="margin-bottom: 12px;"><strong>${bet.name}</strong><br>`;
+                oddsHTML += `<div style="margin-bottom: 12px;"><strong>${traduzirMercado(bet.name)}</strong><br>`;
                 bet.values.forEach(odd => {
                     const nome = `${bet.name}: ${odd.value}`;
                     const valor = parseFloat(odd.odd);

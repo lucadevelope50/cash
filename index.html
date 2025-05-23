@@ -112,7 +112,85 @@ function traduzirValorOdd(valor) {
 
     return partes.join(' ');
 }
+async function carregarOddsReais() {
+    const API_KEY = "69b92fb729838ba69139a6d92c457f83";
+    const ligaID = document.getElementById("liga").value;
+    const url = `https://v3.football.api-sports.io/odds?league=${ligaID}&season=2025&bookmaker=2`;
 
+    const headers = {
+        "x-apisports-key": API_KEY,
+        "Accept": "application/json"
+    };
+
+    try {
+        const response = await fetch(url, { method: 'GET', headers });
+        if (!response.ok) throw new Error('Erro na resposta da rede');
+
+        const json = await response.json();
+        const data = json.response;
+        const inputs = document.getElementById("inputs");
+        inputs.innerHTML = "";
+
+        for (const item of data) {
+            const fixture = item.fixture;
+            const fixtureId = fixture?.id;
+            const bookmaker = item.bookmakers?.[0];
+            const bets = bookmaker?.bets;
+
+            if (!fixture || !fixtureId || !Array.isArray(bets)) continue;
+
+            let homeTeam = "Time Casa";
+            let awayTeam = "Time Visitante";
+
+            try {
+                const fixtureResp = await fetch(`https://v3.football.api-sports.io/fixtures?id=${fixtureId}`, { headers });
+                const fixtureJson = await fixtureResp.json();
+                const fixtureData = fixtureJson.response[0];
+
+                homeTeam = fixtureData?.teams?.home?.name || homeTeam;
+                awayTeam = fixtureData?.teams?.away?.name || awayTeam;
+            } catch (e) {
+                console.warn("Erro ao carregar nomes dos times para fixture:", fixtureId);
+            }
+
+            let oddsHTML = "";
+            bets.forEach(bet => {
+                oddsHTML += `<div style="margin-bottom: 12px;"><strong>${traduzirMercado(bet.name)}</strong><br>`;
+                bet.values.forEach(odd => {
+                    const nome = `${bet.name}: ${traduzirValorOdd(odd.value)}`;
+                    const valor = parseFloat(odd.odd);
+                    oddsHTML += `<label><input type="checkbox" class="jogoCheck" data-nome="${nome}" data-odd="${valor.toFixed(2)}" /> ${traduzirValorOdd(odd.value)} - ${valor.toFixed(2)}</label><br>`;
+                });
+                oddsHTML += `</div>`;
+            });
+
+            if (oddsHTML.includes('input')) {
+                const dataHora = new Date(fixture.date);
+                const dataStr = dataHora.toLocaleDateString("pt-BR", { day: '2-digit', month: 'short' });
+                const horaStr = dataHora.toLocaleTimeString("pt-BR", { hour: '2-digit', minute: '2-digit' });
+
+                inputs.innerHTML += `
+                  <div class="jogo-card">
+                    <div class="jogo-header">${ligaID}</div>
+                    <div class="jogo-conteudo">
+                      <div class="jogo-info">🗓️ ${dataStr} às ${horaStr}</div>
+                      <div class="jogo-times">⚽ ${homeTeam} vs 🟢 ${awayTeam}</div>
+                      <div class="jogo-odds">${oddsHTML}</div>
+                    </div>
+                  </div>`;
+            }
+        }
+
+        if (!inputs.innerHTML.trim()) {
+            inputs.innerHTML = "<p style='color: red; text-align: center;'>Nenhuma odd encontrada para esta liga.</p>";
+        }
+
+    } catch (error) {
+        console.error('Erro ao carregar odds:', error);
+        alert('Erro ao carregar odds. Veja o console para mais detalhes.');
+    }
+}
+  
 function gerarCombinacoes(array, k) {
   let res = [];
   function comb(start, combo) {

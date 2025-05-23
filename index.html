@@ -92,6 +92,26 @@
 
 <script>
 
+function traduzirValorOdd(valor) {
+    const traducoes = {
+        "Home": "Casa",
+        "Draw": "Empate",
+        "Away": "Visitante",
+        "Over 0.5": "Acima de 0.5",
+        "Over 1.5": "Acima de 1.5",
+        "Over 2.5": "Acima de 2.5",
+        "Over 3.5": "Acima de 3.5",
+        "Under 0.5": "Abaixo de 0.5",
+        "Under 1.5": "Abaixo de 1.5",
+        "Under 2.5": "Abaixo de 2.5",
+        "Under 3.5": "Abaixo de 3.5",
+        "Yes": "Sim",
+        "No": "Não"
+    };
+    return traducoes[valor] || valor;
+}
+
+
 function traduzirMercado(nomeOriginal) {
     const traducoes = {
         "Match Winner": "Resultado Final",
@@ -152,9 +172,9 @@ async function carregarOddsReais() {
             bets.forEach(bet => {
                 oddsHTML += `<div style="margin-bottom: 12px;"><strong>${traduzirMercado(bet.name)}</strong><br>`;
                 bet.values.forEach(odd => {
-                    const nome = `${bet.name}: ${odd.value}`;
+                    const nome = `${bet.name}: ${traduzirValorOdd(odd.value)}`;
                     const valor = parseFloat(odd.odd);
-                    oddsHTML += `<label><input type="checkbox" class="jogoCheck" data-nome="${nome}" data-odd="${valor.toFixed(2)}" /> ${odd.value} - ${valor.toFixed(2)}</label><br>`;
+                    oddsHTML += `<label><input type="checkbox" class="jogoCheck" data-nome="${nome}" data-odd="${valor.toFixed(2)}" /> ${traduzirValorOdd(odd.value)} - ${valor.toFixed(2)}</label><br>`;
                 });
                 oddsHTML += `</div>`;
             });

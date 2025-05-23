@@ -97,6 +97,28 @@ function traduzirValorOdd(valor) {
         "Home": "Casa",
         "Draw": "Empate",
         "Away": "Visitante",
+        "Over": "Acima",
+        "Under": "Abaixo",
+        "Yes": "Sim",
+        "No": "Não"
+    };
+
+    const partes = valor.split(' ');
+    const primeiraPalavra = partes[0];
+
+    if (traducoes[primeiraPalavra]) {
+        partes[0] = traducoes[primeiraPalavra];
+    }
+
+    return partes.join(' ');
+}
+  
+  
+  function traduzirValorOdd(valor) {
+    const traducoes = {
+        "Home": "Casa",
+        "Draw": "Empate",
+        "Away": "Visitante",
         "Over 0.5": "Acima de 0.5",
         "Over 1.5": "Acima de 1.5",
         "Over 2.5": "Acima de 2.5",
